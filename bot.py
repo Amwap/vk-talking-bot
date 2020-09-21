@@ -45,7 +45,7 @@ for event in longpoll.listen():
                     author = f'vk {event.user_id}'
                     response = bot.learn(arg1, arg2, author)
                     print(event.user_id, response)
-                    answer = response['answer']
+                    answer = response['system_message']
 
                 except IndexError:
                     answer = 'Ошибочная команда. попробуй "add вопрос = ответ"'
@@ -58,7 +58,7 @@ for event in longpoll.listen():
                     if lowtext.startswith('r+'): operator = 'rup'
                     if lowtext.startswith('r-'): operator = 'rdown'
                     response = bot.rating(operator, last_message[event.peer_id])
-                    answer = response['answer']
+                    answer = response['system_message']
                     rating_stop[event.user_id] = last_message[event.peer_id]
                     print(event.user_id, response)
 
