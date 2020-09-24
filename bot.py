@@ -14,7 +14,7 @@ def write_msg(user_id, message):
         'random_id': get_random_id()})
 
 
-token = "0b7170f5e40cecea90666360bda44e8a528b341e4c85042a0ce7ea013aef036fba8468021e17b906407d8"
+token = "your token"
 
 vk = vk_api.VkApi(token=token)
 longpoll = VkLongPoll(vk)
@@ -24,7 +24,7 @@ keyboard.add_button('R-', color=VkKeyboardColor.NEGATIVE)
 keyboard.add_button('R+', color=VkKeyboardColor.POSITIVE)
 
 bot = Dora_client()
-bot.key = 'lvklvsdN'
+bot.key = 'your partner key'
 last_message = {}
 rating_stop = {}
 
