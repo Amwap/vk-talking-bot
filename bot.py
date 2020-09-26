@@ -3,20 +3,25 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from vk_api.utils import get_random_id
 
-
 from dora_client import Dora_client
+import json
+
+with open('config.json') as f:
+    config = json.load(f)
+
 
 def write_msg(user_id, message):
+    random_id = get_random_id()
     vk.method('messages.send', {
         'keyboard': keyboard.get_keyboard(),
         'user_id': user_id,
         'message': message,
-        'random_id': get_random_id()})
+        'random_id': random_id})
 
 
-token = "0b7170f5e40cecea90666360bda44e8a528b341e4c85042a0ce7ea013aef036fba8468021e17b906407d8"
+TOKEN = config['token']
 
-vk = vk_api.VkApi(token=token)
+vk = vk_api.VkApi(token=TOKEN)
 longpoll = VkLongPoll(vk)
 
 keyboard = VkKeyboard(one_time=True)
@@ -24,7 +29,7 @@ keyboard.add_button('R-', color=VkKeyboardColor.NEGATIVE)
 keyboard.add_button('R+', color=VkKeyboardColor.POSITIVE)
 
 bot = Dora_client()
-bot.key = 'lvklvsdN'
+bot.key = config['key']
 last_message = {}
 rating_stop = {}
 
@@ -45,24 +50,26 @@ for event in longpoll.listen():
                     author = f'vk {event.user_id}'
                     response = bot.learn(arg1, arg2, author)
                     print(event.user_id, response)
-                    answer = response['system_message']
+                    answer = response['answer']
+                    write_msg(event.peer_id, answer)
 
                 except IndexError:
                     answer = 'Ошибочная команда. попробуй "add вопрос = ответ"'
+                    write_msg(event.peer_id, answer)
 
             elif lowtext.startswith('r+') or lowtext.startswith('r-'):
                 if rating_stop[event.user_id] == last_message[event.peer_id]:
                     answer = 'Больше одного раза голосовать нельзя.'
+                    write_msg(event.peer_id, answer)
 
                 else:
                     if lowtext.startswith('r+'): operator = 'rup'
                     if lowtext.startswith('r-'): operator = 'rdown'
                     response = bot.rating(operator, last_message[event.peer_id])
-                    answer = response['system_message']
+                    answer = response['answer']
                     rating_stop[event.user_id] = last_message[event.peer_id]
                     print(event.user_id, response)
-
-
+                    write_msg(event.peer_id, answer)
 
             else:
                 response = bot.answer(text)
@@ -70,13 +77,5 @@ for event in longpoll.listen():
                 rating_stop[event.user_id] = -1
                 answer = f"{response['answer']} ({response['coefficient']})"
                 print(event.user_id, response)
-
-
-            write_msg(event.peer_id, answer)
-
-            # if request == "привет":
-            #     write_msg(event.user_id, "Хай")
-            # elif request == "пока":
-            #     write_msg(event.user_id, "Пока((")
-            # else:
-            #     write_msg(event.user_id, "Не поняла вашего ответа...")
+                write_msg(event.peer_id, answer)
+a = 1/0
