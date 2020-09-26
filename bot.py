@@ -53,7 +53,7 @@ for event in longpoll.listen():
                     answer = response['answer']
                     write_msg(event.peer_id, answer)
 
-                except IndexError:
+                except:
                     answer = 'Ошибочная команда. попробуй "add вопрос = ответ"'
                     write_msg(event.peer_id, answer)
 
@@ -79,3 +79,4 @@ for event in longpoll.listen():
                 print(event.user_id, response)
                 write_msg(event.peer_id, answer)
 a = 1/0
+
